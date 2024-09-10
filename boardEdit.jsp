@@ -1,5 +1,5 @@
-<%@page import="java.sql.ResultSet"%>
 <%@page import="java.sql.Statement"%>
+<%@page import="java.sql.ResultSet"%>
 <%@page import="java.sql.DriverManager"%>
 <%@page import="java.sql.Connection"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
@@ -9,11 +9,14 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+
 </head>
 <body>
 <%
 String bno=request.getParameter("c");
-String sql = "select bno,bsubj, bwriter,bmemo,bdate,cnt from board where bno="+bno;
+String sql="select bno,bsubj,bwriter,bmemo,bdate,cnt from board where bno="+bno;
+
+//dbcon
 Class.forName("oracle.jdbc.driver.OracleDriver");
 String url = "jdbc:oracle:thin:@localhost:1521:xe";
 String user = "hr";
@@ -24,8 +27,8 @@ Statement stmt=con.createStatement();
 ResultSet rs=stmt.executeQuery(sql);
 rs.next();
 
-
 %>
+<form action="boardEdit2.jsp" method="post">
 <table class="twidth">
 	<colgroup>
 		<col width="15%" />
@@ -48,21 +51,37 @@ rs.next();
 			<td><%=rs.getDate("bdate") %></td>
 		</tr>
 		<tr>
+			<th class="left">제목</th>
+			<td colspan="3">
+				<input type="text" class="inp" name="bsubj" value="<%=rs.getString("bsubj") %>" />
+			
+			
+			
+			
+			</td>
+		</tr>
+		<tr>
 			<th class="left">내용</th>
-			<td colspan="3" id="bmemo"><%=rs.getString("bmemo") %></td>
+			<td colspan="3" id="bmemo">
+				<textarea name="bmemo" >
+			<%=rs.getString("bmemo") %></textarea>
+			</td>
 		</tr>
 		
+	
 	</tbody>
-	
-	
+
 </table>
-		
-	<a href="boardEdit.jsp?c=<%=rs.getInt("bno")%>"><button>수정</button></a>
-	<a href="boardDel2.jsp?c=<%=rs.getInt("bno")%>"><button>삭제</button></a>
-	<a href="board.jsp"> <button>목록</button> </a>
-	
+<input type="hidden" name="c" value="<%=rs.getInt("bno") %>" />
+<input type="submit" value="수정하기" />
+<a href="boardDetail.jsp?c=<%=rs.getInt("bno") %>">취소</a>
+</form>
+
 </body>
 </html>
 
-<%  %>
-
+<%
+stmt.close();
+con.close();
+rs.close();
+%>
